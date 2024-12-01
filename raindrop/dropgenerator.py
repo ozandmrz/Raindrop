@@ -1,3 +1,4 @@
+import pyblur
 import random
 from random import randint
 import cv2
@@ -8,7 +9,7 @@ from PIL import Image
 from PIL import ImageEnhance
 from skimage.measure import label as skimage_label
 
-from raindrop import raindrop
+from raindrop.raindrop import raindrop
 """
 This script generate the Drop on the images
 Author: Chia-Tse, Chang
@@ -97,7 +98,7 @@ def generateDrops(imagePath, cfg, inputLabel = None):
 			# label should start from 1
 			key = key+1
 			radius = random.randint(minR, maxR)
-			drop = raindrop(key, pos, radius)
+			drop = raindrop(key, pos, radius, type=random.choice(['default', 'splash']))
 			listRainDrops.append(drop)
 	#using input label			
 	else:
@@ -122,7 +123,7 @@ def generateDrops(imagePath, cfg, inputLabel = None):
 			
 			# store left top
 			centerxy = (L, U)			
-			drop = raindrop(idx, centerxy = centerxy, input_alpha = cur_alpha, input_label = cur_label)
+			drop = raindrop(idx, centerxy = centerxy, input_alpha = cur_alpha, input_label = cur_label, type='splash')
 			listRainDrops.append(drop)
 			
 		
@@ -273,7 +274,7 @@ def generateDrops(imagePath, cfg, inputLabel = None):
 		
 		
 		output = drop.getTexture()		
-		tmp_output = np.asarray(output).astype(np.float)[:,:,-1]
+		tmp_output = np.asarray(output).astype(np.float64)[:,:,-1]
 		tmp_alpha_map = tmp_alpha_map * (tmp_output/255)
 		tmp_alpha_map  = Image.fromarray(tmp_alpha_map.astype('uint8'))		
 		tmp_alpha_map.save("test.bmp")
